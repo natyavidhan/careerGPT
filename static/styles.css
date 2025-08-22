@@ -64,6 +64,12 @@ body {
     margin-bottom: 30px;
 }
 
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
 .logo {
     font-size: 24px;
     font-weight: 700;
@@ -82,6 +88,23 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.saved-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.saved-btn:hover {
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--accent-color);
 }
 
 /* Title styles */
@@ -453,6 +476,188 @@ body {
     background-color: var(--card-bg);
     border-radius: 16px;
     box-shadow: var(--shadow);
+}
+
+/* Save button and notification */
+.save-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.save-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.save-btn:hover {
+    background-color: var(--accent-dark);
+    transform: translateY(-2px);
+}
+
+.save-btn.saved {
+    background-color: var(--accent-dark);
+}
+
+.save-btn.already-saved {
+    background-color: var(--subtitle-color);
+}
+
+.save-notification {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #10b981;
+    color: white;
+    border-radius: 8px;
+    font-weight: 500;
+    animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Saved roadmaps page */
+.saved-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.saved-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+}
+
+.saved-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-light);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.saved-card h3 {
+    color: var(--title-color);
+    margin: 0 0 15px 0;
+    font-size: 1.3rem;
+}
+
+.saved-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--subtitle-color);
+    margin-bottom: 15px;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 16px;
+    opacity: 0.7;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.view-saved {
+    text-align: center;
+    padding: 10px;
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--accent-color);
+    border-radius: 8px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.no-saved {
+    margin-top: 50px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--subtitle-color);
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    color: var(--title-color);
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.empty-state p {
+    color: var(--subtitle-color);
+    margin-bottom: 25px;
+}
+
+.primary-btn {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.primary-btn:hover {
+    background-color: var(--accent-dark);
+    transform: translateY(-2px);
+}
+
+.secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 20px;
+    transition: all 0.3s;
+}
+
+.secondary-btn:hover {
+    background-color: rgba(67, 97, 238, 0.1);
 }
 
 /* Responsive tweaks */

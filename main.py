@@ -14,6 +14,11 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 def home():
     return render_template("home.html")
 
+# New route for the saved roadmaps page
+@app.route("/saved")
+def saved_roadmaps():
+    return render_template("saved.html")
+
 # New route for the roadmap page
 @app.route("/roadmap/<career>")
 def roadmap(career):

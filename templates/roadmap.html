@@ -22,6 +22,15 @@
         <div id="roadmap-container" class="roadmap-container" style="display: none;">
             <!-- Roadmap will be inserted here dynamically -->
         </div>
+        
+        <div id="save-container" class="save-container" style="display: none;">
+            <button id="save-roadmap" class="save-btn">
+                <i class="fas fa-bookmark"></i> Save Roadmap
+            </button>
+            <div id="save-notification" class="save-notification" style="display: none;">
+                Roadmap saved successfully!
+            </div>
+        </div>
     </div>
 
     <script>
@@ -30,6 +39,11 @@
             const loadingIndicator = document.getElementById('loading');
             const roadmapContainer = document.getElementById('roadmap-container');
             const progressBar = document.getElementById('progress-bar');
+            const saveContainer = document.getElementById('save-container');
+            const saveButton = document.getElementById('save-roadmap');
+            const saveNotification = document.getElementById('save-notification');
+            
+            let roadmapData = null;
             
             // Animate progress bar
             let progress = 0;
@@ -38,6 +52,48 @@
                 progressBar.style.width = `${Math.min(progress, 95)}%`;
                 if (progress >= 95) clearInterval(progressInterval);
             }, 100);
+            
+            // Save roadmap functionality
+            saveButton.addEventListener('click', function() {
+                if (roadmapData) {
+                    // Get existing saved roadmaps or initialize empty array
+                    const savedRoadmaps = JSON.parse(localStorage.getItem('savedRoadmaps') || '[]');
+                    
+                    // Check if this career roadmap is already saved
+                    const existingIndex = savedRoadmaps.findIndex(item => item.career === roadmapData.career);
+                    
+                    if (existingIndex >= 0) {
+                        // Update existing roadmap
+                        savedRoadmaps[existingIndex] = roadmapData;
+                    } else {
+                        // Add new roadmap
+                        savedRoadmaps.push(roadmapData);
+                    }
+                    
+                    // Save to localStorage
+                    localStorage.setItem('savedRoadmaps', JSON.stringify(savedRoadmaps));
+                    
+                    // Show notification
+                    saveNotification.style.display = 'block';
+                    setTimeout(() => {
+                        saveNotification.style.display = 'none';
+                    }, 3000);
+                    
+                    // Update button state
+                    saveButton.innerHTML = '<i class="fas fa-check"></i> Roadmap Saved';
+                    saveButton.classList.add('saved');
+                    setTimeout(() => {
+                        saveButton.innerHTML = '<i class="fas fa-bookmark"></i> Save Roadmap';
+                        saveButton.classList.remove('saved');
+                    }, 2000);
+                }
+            });
+            
+            // Check if roadmap is already saved
+            function checkIfSaved(career) {
+                const savedRoadmaps = JSON.parse(localStorage.getItem('savedRoadmaps') || '[]');
+                return savedRoadmaps.some(item => item.career === career);
+            }
             
             // Fetch the roadmap data
             async function fetchRoadmap() {
@@ -53,6 +109,9 @@
                     const data = await response.json();
                     
                     if (response.ok) {
+                        // Store roadmap data
+                        roadmapData = data;
+                        
                         // Complete progress bar
                         progressBar.style.width = '100%';
                         setTimeout(() => {
@@ -92,6 +151,15 @@
                             
                             roadmapContainer.innerHTML = roadmapHtml;
                             roadmapContainer.style.display = 'block';
+                            
+                            // Show save button
+                            saveContainer.style.display = 'flex';
+                            
+                            // Update button if roadmap is already saved
+                            if (checkIfSaved(data.career)) {
+                                saveButton.innerHTML = '<i class="fas fa-bookmark"></i> Already Saved';
+                                saveButton.classList.add('already-saved');
+                            }
                         }, 500);
                     } else {
                         throw new Error(data.error || 'Failed to generate roadmap');

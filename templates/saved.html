@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block title %}
+    Saved Roadmaps - CareerGPT
+{% endblock %} 
+{% block content %}
+    <div class="container">
+        <h1 class="main-title">Your Saved Roadmaps</h1>
+        <p class="subtitle">Access your career paths anytime</p>
+        
+        <div id="no-saved" class="no-saved" style="display: none;">
+            <div class="empty-state">
+                <i class="fas fa-bookmark empty-icon"></i>
+                <h3>No saved roadmaps yet</h3>
+                <p>When you save career roadmaps, they will appear here.</p>
+                <a href="/" class="primary-btn">Explore Careers</a>
+            </div>
+        </div>
+        
+        <div id="saved-roadmaps" class="saved-roadmaps">
+            <!-- Saved roadmaps will be loaded here -->
+        </div>
+        
+        <div id="selected-roadmap" class="roadmap-container" style="display: none;">
+            <!-- Selected roadmap will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const noSavedElement = document.getElementById('no-saved');
+            const savedRoadmapsElement = document.getElementById('saved-roadmaps');
+            const selectedRoadmapElement = document.getElementById('selected-roadmap');
+            
+            // Load saved roadmaps from localStorage
+            const savedRoadmaps = JSON.parse(localStorage.getItem('savedRoadmaps') || '[]');
+            
+            if (savedRoadmaps.length === 0) {
+                // Show empty state if no saved roadmaps
+                noSavedElement.style.display = 'block';
+                savedRoadmapsElement.style.display = 'none';
+            } else {
+                // Create cards for saved roadmaps
+                let savedHtml = '<div class="saved-grid">';
+                
+                savedRoadmaps.forEach((roadmap, index) => {
+                    savedHtml += `
+                        <div class="saved-card" data-index="${index}">
+                            <h3>${roadmap.career}</h3>
+                            <div class="saved-info">
+                                <span>${roadmap.roadmap.length} steps</span>
+                                <button class="delete-btn" data-index="${index}" title="Delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                            <div class="view-saved">
+                                <i class="fas fa-eye"></i> View Roadmap
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                savedHtml += '</div>';
+                savedRoadmapsElement.innerHTML = savedHtml;
+                
+                // Add click events to saved roadmap cards
+                const savedCards = document.querySelectorAll('.saved-card');
+                savedCards.forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        // Don't trigger if clicking delete button
+                        if (e.target.closest('.delete-btn')) {
+                            return;
+                        }
+                        
+                        const index = this.getAttribute('data-index');
+                        displayRoadmap(savedRoadmaps[index]);
+                    });
+                });
+                
+                // Add click events to delete buttons
+                const deleteButtons = document.querySelectorAll('.delete-btn');
+                deleteButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const index = this.getAttribute('data-index');
+                        
+                        if (confirm('Are you sure you want to delete this roadmap?')) {
+                            // Remove from array and update localStorage
+                            savedRoadmaps.splice(index, 1);
+                            localStorage.setItem('savedRoadmaps', JSON.stringify(savedRoadmaps));
+                            
+                            // Refresh the page to show updated list
+                            location.reload();
+                        }
+                    });
+                });
+            }
+            
+            // Function to display a selected roadmap
+            function displayRoadmap(roadmap) {
+                // Scroll to top first
+                window.scrollTo(0, 0);
+                
+                // Create roadmap visualization
+                let roadmapHtml = `
+                    <div class="roadmap-header">
+                        <h2><i class="fas fa-map-marked-alt"></i> Career Path: ${roadmap.career}</h2>
+                        <p>Your saved roadmap to becoming a ${roadmap.career}</p>
+                    </div>
+                    <div class="roadmap-timeline">
+                `;
+                
+                roadmap.roadmap.forEach((step, index) => {
+                    roadmapHtml += `
+                        <div class="roadmap-step">
+                            <div class="step-number">${index + 1}</div>
+                            <div class="step-content">
+                                <h3 class="step-phase">${step.phase}</h3>
+                                <div class="step-duration">
+                                    <i class="fas fa-clock"></i> ${step.duration}
+                                </div>
+                                <p class="step-goal">${step.goal}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                roadmapHtml += `
+                    </div>
+                    <div class="roadmap-footer">
+                        <p><i class="fas fa-lightbulb"></i> This roadmap is a guide - adapt it to your personal situation and goals.</p>
+                        <button id="back-to-list" class="secondary-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Saved Roadmaps
+                        </button>
+                    </div>
+                `;
+                
+                // Display the roadmap
+                selectedRoadmapElement.innerHTML = roadmapHtml;
+                savedRoadmapsElement.style.display = 'none';
+                selectedRoadmapElement.style.display = 'block';
+                
+                // Add back button functionality
+                document.getElementById('back-to-list').addEventListener('click', function() {
+                    savedRoadmapsElement.style.display = 'block';
+                    selectedRoadmapElement.style.display = 'none';
+                });
+            }
+        });
+    </script>
+{% endblock %}
