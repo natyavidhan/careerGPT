@@ -154,7 +154,6 @@ def generate_roadmap():
         
         # Extract the JSON response from the AI
         ai_response = response.choices[0].message.content
-        print(ai_response)
         ai_response = ai_response.replace("```json", "").replace("```", "")
         
         try:
