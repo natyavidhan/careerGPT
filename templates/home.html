@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}
+    Home - CareerGPT
+{% endblock %} 
+{% block content %}
+    <div class="container">
+        <h1 class="main-title">Welcome to CareerGPT</h1>
+        <p class="subtitle">Your journey to a better career starts here.</p>
+        
+        <div class="input-section">
+            <h2>Tell us about yourself</h2>
+            <form id="career-form">
+                <textarea id="user-input" name="user_input" rows="4" placeholder="Describe your skills, interests and experience..."></textarea>
+                <button type="submit" class="submit-btn">Get Career Suggestions</button>
+            </form>
+        </div>
+        
+        <div id="loading" class="loading-indicator" style="display: none;">
+            <div class="spinner"></div>
+            <p>Analyzing your profile...</p>
+        </div>
+        
+        <div id="results-section" class="results-section" style="display: none;">
+            <h2>Your Career Suggestions</h2>
+            <div id="career-cards" class="career-cards">
+                <!-- Career cards will be inserted here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('career-form');
+            const loadingIndicator = document.getElementById('loading');
+            const resultsSection = document.getElementById('results-section');
+            const careerCards = document.getElementById('career-cards');
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const userInput = document.getElementById('user-input').value.trim();
+                
+                if (!userInput) {
+                    alert('Please enter information about yourself first.');
+                    return;
+                }
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'flex';
+                resultsSection.style.display = 'none';
+                
+                try {
+                    const response = await fetch('/api/suggest_careers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ user_input: userInput })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Clear previous results
+                        careerCards.innerHTML = '';
+                        
+                        // Create career cards
+                        data.career_suggestions.forEach(suggestion => {
+                            const card = document.createElement('div');
+                            card.className = 'career-card';
+                            
+                            card.innerHTML = `
+                                <h3>${suggestion.career}</h3>
+                                <div class="confidence-meter">
+                                    <div class="confidence-level level-${suggestion.confidence}"></div>
+                                    <span>Confidence: ${suggestion.confidence}/5</span>
+                                </div>
+                                <p class="reason">${suggestion.reason}</p>
+                            `;
+                            
+                            careerCards.appendChild(card);
+                        });
+                        
+                        // Show results
+                        resultsSection.style.display = 'block';
+                    } else {
+                        throw new Error(data.error || 'Failed to get career suggestions');
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    console.error('Error:', error);
+                } finally {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                }
+            });
+        });
+    </script>
+{% endblock %}
