@@ -4,14 +4,16 @@
 {% endblock %} 
 {% block content %}
     <div class="container">
-        <h1 class="main-title">Welcome to CareerGPT</h1>
-        <p class="subtitle">Your journey to a better career starts here.</p>
+        <h1 class="main-title">Find Your Perfect Career Path</h1>
+        <p class="subtitle">Powered by AI, designed for your future</p>
         
         <div class="input-section">
-            <h2>Tell us about yourself</h2>
+            <h2><i class="fas fa-user-circle"></i> Tell us about yourself</h2>
             <form id="career-form">
-                <textarea id="user-input" name="user_input" rows="4" placeholder="Describe your skills, interests and experience..."></textarea>
-                <button type="submit" class="submit-btn">Get Career Suggestions</button>
+                <textarea id="user-input" name="user_input" rows="4" placeholder="Describe your skills, interests, education and experience..."></textarea>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-search"></i> Get Career Suggestions
+                </button>
             </form>
         </div>
         
@@ -67,22 +69,39 @@
                         // Create career cards
                         data.career_suggestions.forEach(suggestion => {
                             const card = document.createElement('div');
-                            card.className = 'career-card';
+                            card.className = 'career-card clickable';
                             
                             card.innerHTML = `
                                 <h3>${suggestion.career}</h3>
                                 <div class="confidence-meter">
-                                    <div class="confidence-level level-${suggestion.confidence}"></div>
-                                    <span>Confidence: ${suggestion.confidence}/5</span>
+                                    <div class="confidence-label">
+                                        <span>Confidence</span>
+                                        <span>${suggestion.confidence}/5</span>
+                                    </div>
+                                    <div class="confidence-bar">
+                                        <div class="confidence-level level-${suggestion.confidence}"></div>
+                                    </div>
                                 </div>
                                 <p class="reason">${suggestion.reason}</p>
+                                <div class="view-roadmap">
+                                    <i class="fas fa-road"></i> View Career Roadmap
+                                </div>
                             `;
+                            
+                            card.addEventListener('click', function() {
+                                window.location.href = `/roadmap/${encodeURIComponent(suggestion.career)}`;
+                            });
                             
                             careerCards.appendChild(card);
                         });
                         
-                        // Show results
+                        // Show results with animation
                         resultsSection.style.display = 'block';
+                        resultsSection.style.opacity = 0;
+                        setTimeout(() => {
+                            resultsSection.style.transition = 'opacity 0.5s ease-in';
+                            resultsSection.style.opacity = 1;
+                        }, 10);
                     } else {
                         throw new Error(data.error || 'Failed to get career suggestions');
                     }

@@ -1,157 +1,475 @@
+:root {
+    /* Light theme variables */
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --title-color: #2c3e50;
+    --subtitle-color: #6c757d;
+    --accent-color: #4361ee;
+    --accent-light: #4895ef;
+    --accent-dark: #3a0ca3;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --input-bg: #ffffff;
+    --input-border: #e0e0e0;
+    --meter-bg: #f0f0f0;
+    --timeline-line: #4361ee;
+}
+
+[data-theme="dark"] {
+    /* Dark theme variables */
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --title-color: #f8f9fa;
+    --subtitle-color: #adb5bd;
+    --accent-color: #4cc9f0;
+    --accent-light: #4895ef;
+    --accent-dark: #7209b7;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --input-bg: #2a2a2a;
+    --input-border: #444444;
+    --meter-bg: #2a2a2a;
+    --timeline-line: #4cc9f0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
     line-height: 1.6;
-    color: #333;
+    color: var(--text-color);
+    background-color: var(--bg-color);
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
 .container {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto;
+    padding: 20px;
 }
 
+/* Header styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    margin-bottom: 30px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 20px;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Title styles */
 .main-title {
-    color: #2c3e50;
+    color: var(--title-color);
     text-align: center;
     margin-bottom: 10px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .subtitle {
     text-align: center;
-    color: #7f8c8d;
-    margin-bottom: 40px;
+    color: var(--subtitle-color);
+    margin-bottom: 50px;
+    font-size: 1.1rem;
 }
 
+/* Input section */
 .input-section {
-    background-color: #f9f9f9;
-    padding: 25px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 40px;
+    box-shadow: var(--shadow);
 }
 
 .input-section h2 {
     margin-top: 0;
-    color: #2c3e50;
+    color: var(--title-color);
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
 }
 
 #user-input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 15px;
+    border: 1px solid var(--input-border);
+    border-radius: 12px;
     font-size: 16px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    resize: vertical;
+}
+
+#user-input:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
 }
 
 .submit-btn {
-    background-color: #3498db;
+    background-color: var(--accent-color);
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
+    padding: 15px 25px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: block;
+    margin: 0 auto;
+    min-width: 200px;
 }
 
 .submit-btn:hover {
-    background-color: #2980b9;
+    background-color: var(--accent-dark);
+    transform: translateY(-2px);
 }
 
+/* Results section */
 .results-section {
-    margin-top: 40px;
+    margin-top: 50px;
 }
 
 .results-section h2 {
-    color: #2c3e50;
-    margin-bottom: 20px;
+    color: var(--title-color);
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 600;
 }
 
 .career-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
 }
 
 .career-card {
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+    border: 1px solid transparent;
 }
 
-.career-card:hover {
+/* Clickable career cards */
+.career-card.clickable {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.career-card.clickable:hover {
     transform: translateY(-5px);
+    border-color: var(--accent-light);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .career-card h3 {
     margin-top: 0;
-    color: #2c3e50;
+    color: var(--title-color);
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
 }
 
 .confidence-meter {
     margin: 15px 0;
 }
 
-.confidence-level {
-    height: 10px;
-    border-radius: 5px;
+.confidence-label {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 5px;
+    font-size: 14px;
+    color: var(--subtitle-color);
+}
+
+.confidence-bar {
+    height: 8px;
+    background-color: var(--meter-bg);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.confidence-level {
+    height: 100%;
+    border-radius: 4px;
 }
 
 .level-5 {
     width: 100%;
-    background-color: #27ae60;
+    background: linear-gradient(90deg, var(--accent-color), var(--accent-light));
 }
 
 .level-4 {
     width: 80%;
-    background-color: #2ecc71;
+    background: linear-gradient(90deg, var(--accent-color), var(--accent-light));
 }
 
 .level-3 {
     width: 60%;
-    background-color: #3498db;
+    background: linear-gradient(90deg, var(--accent-color), var(--accent-light));
 }
 
 .level-2 {
     width: 40%;
-    background-color: #f39c12;
+    background: linear-gradient(90deg, #f9c74f, #f8961e);
 }
 
 .level-1 {
     width: 20%;
-    background-color: #e74c3c;
+    background: linear-gradient(90deg, #f94144, #f3722c);
 }
 
 .reason {
-    color: #7f8c8d;
-    font-size: 14px;
+    color: var(--text-color);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-top: 15px;
 }
 
+.view-roadmap {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--accent-color);
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgba(67, 97, 238, 0.1);
+}
+
+/* Loading indicator */
 .loading-indicator {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 40px 0;
+    margin: 50px 0;
 }
 
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #3498db;
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(67, 97, 238, 0.1);
+    border-top: 5px solid var(--accent-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+.loading-indicator p {
+    color: var(--subtitle-color);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+/* Roadmap page styles */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+    gap: 5px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.back-link:hover {
+    background-color: rgba(67, 97, 238, 0.1);
+}
+
+.back-link svg {
+    margin-right: 5px;
+}
+
+.progress-container {
+    width: 100%;
+    height: 10px;
+    background-color: var(--meter-bg);
+    border-radius: 5px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-color), var(--accent-light));
+    border-radius: 5px;
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.roadmap-container {
+    margin-top: 40px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.roadmap-header {
+    text-align: center;
+    margin-bottom: 50px;
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+.roadmap-header h2 {
+    color: var(--title-color);
+    margin-bottom: 15px;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.roadmap-header p {
+    color: var(--subtitle-color);
+    font-size: 1.1rem;
+}
+
+.roadmap-timeline {
+    position: relative;
+    padding-left: 50px;
+}
+
+.roadmap-timeline:before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent-color), var(--accent-light));
+}
+
+.roadmap-step {
+    position: relative;
+    margin-bottom: 50px;
+}
+
+.roadmap-step:last-child {
+    margin-bottom: 0;
+}
+
+.step-number {
+    position: absolute;
+    left: -50px;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-light));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    z-index: 1;
+    box-shadow: 0 3px 10px rgba(67, 97, 238, 0.3);
+}
+
+.step-content {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent-color);
+}
+
+.step-phase {
+    color: var(--title-color);
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.step-duration {
+    display: inline-block;
+    color: var(--subtitle-color);
+    font-style: italic;
+    margin-bottom: 15px;
+    background-color: rgba(67, 97, 238, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.step-goal {
+    color: var(--text-color);
+    line-height: 1.7;
+}
+
+.roadmap-footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    color: var(--subtitle-color);
+    font-style: italic;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .career-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding: 15px;
+    }
+    
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    .roadmap-step {
+        margin-bottom: 30px;
+    }
 }

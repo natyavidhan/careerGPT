@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{ career }} Roadmap - CareerGPT
+{% endblock %} 
+{% block content %}
+    <div class="container">
+        <a href="/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Career Suggestions
+        </a>
+        
+        <h1 class="main-title">{{ career }} Roadmap</h1>
+        <p class="subtitle">Your personalized path to success</p>
+        
+        <div id="loading" class="loading-indicator">
+            <div class="spinner"></div>
+            <p>Generating your personalized career roadmap...</p>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+        </div>
+        
+        <div id="roadmap-container" class="roadmap-container" style="display: none;">
+            <!-- Roadmap will be inserted here dynamically -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const career = "{{ career }}";
+            const loadingIndicator = document.getElementById('loading');
+            const roadmapContainer = document.getElementById('roadmap-container');
+            const progressBar = document.getElementById('progress-bar');
+            
+            // Animate progress bar
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 0.8;
+                progressBar.style.width = `${Math.min(progress, 95)}%`;
+                if (progress >= 95) clearInterval(progressInterval);
+            }, 100);
+            
+            // Fetch the roadmap data
+            async function fetchRoadmap() {
+                try {
+                    const response = await fetch('/api/generate_roadmap', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ career: career })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Complete progress bar
+                        progressBar.style.width = '100%';
+                        setTimeout(() => {
+                            // Hide loading indicator
+                            loadingIndicator.style.display = 'none';
+                            
+                            // Create roadmap visualization
+                            let roadmapHtml = `
+                                <div class="roadmap-header">
+                                    <h2><i class="fas fa-map-marked-alt"></i> Your Path to Success</h2>
+                                    <p>Follow this roadmap to build your career as a ${data.career}</p>
+                                </div>
+                                <div class="roadmap-timeline">
+                            `;
+                            
+                            data.roadmap.forEach((step, index) => {
+                                roadmapHtml += `
+                                    <div class="roadmap-step">
+                                        <div class="step-number">${index + 1}</div>
+                                        <div class="step-content">
+                                            <h3 class="step-phase">${step.phase}</h3>
+                                            <div class="step-duration">
+                                                <i class="fas fa-clock"></i> ${step.duration}
+                                            </div>
+                                            <p class="step-goal">${step.goal}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            
+                            roadmapHtml += `
+                                </div>
+                                <div class="roadmap-footer">
+                                    <p><i class="fas fa-lightbulb"></i> This roadmap is a guide - adapt it to your personal situation and goals.</p>
+                                </div>
+                            `;
+                            
+                            roadmapContainer.innerHTML = roadmapHtml;
+                            roadmapContainer.style.display = 'block';
+                        }, 500);
+                    } else {
+                        throw new Error(data.error || 'Failed to generate roadmap');
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    console.error('Error:', error);
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+            
+            // Start the roadmap generation process
+            fetchRoadmap();
+        });
+    </script>
+{% endblock %}
