@@ -23,12 +23,57 @@
             <!-- Roadmap will be inserted here dynamically -->
         </div>
         
-        <div id="save-container" class="save-container" style="display: none;">
-            <button id="save-roadmap" class="save-btn">
-                <i class="fas fa-bookmark"></i> Save Roadmap
+        <div class="action-buttons" style="display: none;">
+            <div id="save-container" class="save-container">
+                <button id="save-roadmap" class="save-btn">
+                    <i class="fas fa-bookmark"></i> Save Roadmap
+                </button>
+                <div id="save-notification" class="save-notification" style="display: none;">
+                    Roadmap saved successfully!
+                </div>
+            </div>
+            
+            <button id="analyze-gap-btn" class="analyze-btn">
+                <i class="fas fa-clipboard-check"></i> Analyze Your Skill Gaps
             </button>
-            <div id="save-notification" class="save-notification" style="display: none;">
-                Roadmap saved successfully!
+        </div>
+        
+        <!-- Skill Gap Analysis Modal -->
+        <div id="skill-gap-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-puzzle-piece"></i> Skill Gap Analysis</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Let's analyze what skills you need to acquire for this career path.</p>
+                    
+                    <div class="skill-input-section">
+                        <label for="current-skills">What skills do you currently have?</label>
+                        <textarea id="current-skills" placeholder="List your current skills (e.g., Python, Excel, Project Management...)" rows="3"></textarea>
+                        <button id="analyze-skills-btn" class="submit-btn">Analyze My Skills</button>
+                    </div>
+                    
+                    <div id="skill-gap-loading" class="loading-indicator" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Analyzing your skill gaps...</p>
+                    </div>
+                    
+                    <div id="skill-gap-results" style="display: none;">
+                        <h3>Skills You Need to Acquire</h3>
+                        <div class="skill-checklist">
+                            <!-- Skill gaps will be inserted here dynamically -->
+                        </div>
+                        <div class="gap-analysis-footer">
+                            <p><i class="fas fa-info-circle"></i> Check off skills as you learn them to track your progress.</p>
+                            <p class="priority-legend">
+                                <span class="priority-indicator p1"></span> High Priority
+                                <span class="priority-indicator p2"></span> Medium Priority
+                                <span class="priority-indicator p3"></span> Standard Priority
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -42,8 +87,18 @@
             const saveContainer = document.getElementById('save-container');
             const saveButton = document.getElementById('save-roadmap');
             const saveNotification = document.getElementById('save-notification');
+            const actionButtons = document.querySelector('.action-buttons');
+            const analyzeGapBtn = document.getElementById('analyze-gap-btn');
+            const modal = document.getElementById('skill-gap-modal');
+            const modalClose = document.querySelector('.modal-close');
+            const analyzeSkillsBtn = document.getElementById('analyze-skills-btn');
+            const currentSkillsInput = document.getElementById('current-skills');
+            const skillGapLoading = document.getElementById('skill-gap-loading');
+            const skillGapResults = document.getElementById('skill-gap-results');
+            const skillChecklist = document.querySelector('.skill-checklist');
             
             let roadmapData = null;
+            let skillGapData = null;
             
             // Animate progress bar
             let progress = 0;
@@ -52,6 +107,88 @@
                 progressBar.style.width = `${Math.min(progress, 95)}%`;
                 if (progress >= 95) clearInterval(progressInterval);
             }, 100);
+            
+            // Analyze Skills button click
+            analyzeSkillsBtn.addEventListener('click', async function() {
+                const userSkills = currentSkillsInput.value.trim();
+                
+                if (!userSkills) {
+                    alert('Please enter your current skills');
+                    return;
+                }
+                
+                // Show loading indicator
+                skillGapLoading.style.display = 'flex';
+                skillGapResults.style.display = 'none';
+                
+                try {
+                    const response = await fetch('/api/analyze_skill_gap', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            career: career,
+                            user_skills: userSkills
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Store skill gap data
+                        skillGapData = data;
+                        
+                        // Save skill gap data to localStorage
+                        localStorage.setItem(`skillGapData_${career}`, JSON.stringify(skillGapData));
+                        
+                        // Clear previous results
+                        skillChecklist.innerHTML = '';
+                        
+                        // Get saved progress
+                        const savedProgress = loadSkillGapProgress(career);
+                        
+                        // Create checklist items
+                        data.missing_skills.forEach((skill, index) => {
+                            const skillId = `skill_${index}`;
+                            const isChecked = savedProgress[skillId] || false;
+                            
+                            const listItem = document.createElement('div');
+                            listItem.className = `skill-item priority-${skill.priority}`;
+                            
+                            listItem.innerHTML = `
+                                <label class="skill-checkbox">
+                                    <input type="checkbox" id="${skillId}" ${isChecked ? 'checked' : ''}>
+                                    <span class="checkmark"></span>
+                                    <div class="skill-details">
+                                        <div class="skill-name">${skill.skill}</div>
+                                        <div class="skill-description">${skill.description || ''}</div>
+                                    </div>
+                                </label>
+                            `;
+                            
+                            skillChecklist.appendChild(listItem);
+                            
+                            // Add event listener to save checkbox state
+                            const checkbox = listItem.querySelector(`#${skillId}`);
+                            checkbox.addEventListener('change', function() {
+                                saveSkillGapProgress(career, skillId, this.checked);
+                            });
+                        });
+                        
+                        // Show results
+                        skillGapResults.style.display = 'block';
+                    } else {
+                        throw new Error(data.error || 'Failed to analyze skill gaps');
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    console.error('Error:', error);
+                } finally {
+                    // Hide loading indicator
+                    skillGapLoading.style.display = 'none';
+                }
+            });
             
             // Save roadmap functionality
             saveButton.addEventListener('click', function() {
@@ -62,12 +199,18 @@
                     // Check if this career roadmap is already saved
                     const existingIndex = savedRoadmaps.findIndex(item => item.career === roadmapData.career);
                     
+                    // Create roadmap object with skill gap data if available
+                    const roadmapToSave = {
+                        ...roadmapData,
+                        hasSkillGap: skillGapData !== null
+                    };
+                    
                     if (existingIndex >= 0) {
                         // Update existing roadmap
-                        savedRoadmaps[existingIndex] = roadmapData;
+                        savedRoadmaps[existingIndex] = roadmapToSave;
                     } else {
                         // Add new roadmap
-                        savedRoadmaps.push(roadmapData);
+                        savedRoadmaps.push(roadmapToSave);
                     }
                     
                     // Save to localStorage
@@ -93,6 +236,38 @@
             function checkIfSaved(career) {
                 const savedRoadmaps = JSON.parse(localStorage.getItem('savedRoadmaps') || '[]');
                 return savedRoadmaps.some(item => item.career === career);
+            }
+            
+            // Skill Gap Modal functionality
+            analyzeGapBtn.addEventListener('click', function() {
+                modal.style.display = 'block';
+                // Reset the modal state
+                currentSkillsInput.value = '';
+                skillGapResults.style.display = 'none';
+                skillChecklist.innerHTML = '';
+            });
+            
+            modalClose.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Load skill gap checklist from localStorage
+            function loadSkillGapProgress(career) {
+                const skillGaps = JSON.parse(localStorage.getItem(`skillGap_${career}`) || '{}');
+                return skillGaps;
+            }
+            
+            // Save skill gap checklist to localStorage
+            function saveSkillGapProgress(career, skillId, isChecked) {
+                let skillGaps = loadSkillGapProgress(career);
+                skillGaps[skillId] = isChecked;
+                localStorage.setItem(`skillGap_${career}`, JSON.stringify(skillGaps));
             }
             
             // Fetch the roadmap data
@@ -152,8 +327,8 @@
                             roadmapContainer.innerHTML = roadmapHtml;
                             roadmapContainer.style.display = 'block';
                             
-                            // Show save button
-                            saveContainer.style.display = 'flex';
+                            // Show action buttons
+                            actionButtons.style.display = 'flex';
                             
                             // Update button if roadmap is already saved
                             if (checkIfSaved(data.career)) {

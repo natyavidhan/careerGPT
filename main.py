@@ -166,6 +166,71 @@ def generate_roadmap():
     except Exception as e:
         return jsonify({"error": f"API request failed: {str(e)}"}), 500
 
+# New API endpoint for skill gap analysis
+@app.route("/api/analyze_skill_gap", methods=["POST"])
+def analyze_skill_gap():
+    career = request.json.get("career", "")
+    user_skills = request.json.get("user_skills", "")
+    
+    if not career:
+        return jsonify({"error": "No career provided"}), 400
+    
+    CONF = {
+        "temperature": 0.7,
+        "max_completion_tokens": 4096,
+        "top_p": 1,
+        "reasoning_effort": "medium",
+        "stream": False,
+        "stop": None,
+    }
+    
+    # Prepare the prompt for Groq
+    system_message = "You are a skill gap analyzer that helps users identify skills they need to learn for their target career."
+    
+    user_prompt = f"""
+    You are a skill gap analyzer.  
+    Target career: {career}  
+    User's current skills: {user_skills}  
+
+    Return ONLY a JSON object with the missing skills they need to learn, in priority order.  
+
+    Format:
+    {{
+      "career": "{career}",
+      "user_skills": ["list of user skills"],
+      "missing_skills": [
+        {{"skill": "Skill name", "priority": 1, "description": "Brief explanation why this skill is important"}},
+        {{"skill": "Skill name", "priority": 2, "description": "Brief explanation why this skill is important"}}
+      ]
+    }}
+
+    Parse the user skills into separate items in the array, and identify 5-7 critical missing skills for this career.
+    """
+    
+    try:
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-20b",
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_prompt}
+            ],
+            **CONF
+        )
+        
+        # Extract the JSON response from the AI
+        ai_response = response.choices[0].message.content
+        ai_response = ai_response.replace("```json", "").replace("```", "")
+        
+        try:
+            result = json.loads(ai_response)
+            return jsonify(result)
+        except json.JSONDecodeError:
+            # Fallback if the AI doesn't return valid JSON
+            return jsonify({"error": "Failed to parse AI response"}), 500
+        
+    except Exception as e:
+        return jsonify({"error": f"API request failed: {str(e)}"}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
