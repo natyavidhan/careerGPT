@@ -48,6 +48,39 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Job Search Modal -->
+        <div id="job-search-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-briefcase"></i> Related Job Opportunities</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Let's find job opportunities related to <strong id="job-search-career">this</strong> career path.</p>
+                    
+                    <div class="skill-input-section">
+                        <button id="search-jobs-btn" class="submit-btn">Find Jobs</button>
+                    </div>
+                    
+                    <div id="job-search-loading" class="loading-indicator" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Searching for job opportunities...</p>
+                    </div>
+                    
+                    <div id="job-results" style="display: none;">
+                        <h3>Job Matches</h3>
+                        <div id="job-cards" class="job-cards">
+                            <!-- Job cards will be inserted here -->
+                        </div>
+                        <div class="jobs-footer">
+                            <p><i class="fas fa-info-circle"></i> Job listings are provided as examples and may not be currently active.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -59,6 +92,16 @@
             const modalClose = document.querySelector('.modal-close');
             const skillGapCareer = document.getElementById('skill-gap-career');
             const savedSkillChecklist = document.getElementById('saved-skill-checklist');
+            
+            const jobSearchModal = document.getElementById('job-search-modal');
+            const jobModalClose = document.querySelector('.modal-close');
+            const searchJobsBtn = document.getElementById('search-jobs-btn');
+            const jobSearchLoading = document.getElementById('job-search-loading');
+            const jobResults = document.getElementById('job-results');
+            const jobCards = document.getElementById('job-cards');
+            const jobSearchCareer = document.getElementById('job-search-career');
+            
+            let currentCareer = '';
             
             // Close modal when clicking the X button
             modalClose.addEventListener('click', function() {
@@ -135,6 +178,105 @@
                 skillGapModal.style.display = 'block';
             }
             
+            // Close modal when clicking the X button
+            jobModalClose.addEventListener('click', function() {
+                jobSearchModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside of it
+            window.addEventListener('click', function(event) {
+                if (event.target == jobSearchModal) {
+                    jobSearchModal.style.display = 'none';
+                }
+            });
+            
+            // Function to display job search modal for a specific career
+            function showJobSearch(career) {
+                currentCareer = career;
+                jobSearchCareer.textContent = career;
+                jobResults.style.display = 'none';
+                jobCards.innerHTML = '';
+                jobSearchModal.style.display = 'block';
+            }
+            
+            // Search for jobs
+            searchJobsBtn.addEventListener('click', async function() {
+                const skills = []; // Empty skills array
+                
+                // Show loading
+                jobSearchLoading.style.display = 'flex';
+                jobResults.style.display = 'none';
+                
+                try {
+                    const response = await fetch('/api/job_search', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            career: currentCareer,
+                            skills: skills
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Clear previous results
+                        jobCards.innerHTML = '';
+                        
+                        if (data.jobs && data.jobs.length > 0) {
+                            // Create job cards
+                            data.jobs.forEach(job => {
+                                const jobCard = document.createElement('div');
+                                jobCard.className = 'job-card';
+                                
+                                // Create fit indicator class based on score
+                                let fitClass = 'low-fit';
+                                if (job.fit_score >= 70) {
+                                    fitClass = 'high-fit';
+                                } else if (job.fit_score >= 40) {
+                                    fitClass = 'medium-fit';
+                                }
+                                
+                                jobCard.innerHTML = `
+                                    <div class="job-header">
+                                        <h3 class="job-role">${job.role}</h3>
+                                    </div>
+                                    <div class="job-company">
+                                        <i class="fas fa-building"></i> ${job.company}
+                                    </div>
+                                    <div class="job-details">
+                                        <span><i class="fas fa-map-marker-alt"></i> ${job.location}</span>
+                                        <span><i class="fas fa-briefcase"></i> ${job.type}</span>
+                                    </div>
+                                    <div class="job-actions">
+                                        <a href="${job.link}" target="_blank" class="job-link">
+                                            <i class="fas fa-external-link-alt"></i> View Job
+                                        </a>
+                                    </div>
+                                `;
+                                
+                                jobCards.appendChild(jobCard);
+                            });
+                        } else {
+                            jobCards.innerHTML = '<div class="no-jobs">No matching jobs found. Try different skills or check back later.</div>';
+                        }
+                        
+                        // Show results
+                        jobResults.style.display = 'block';
+                    } else {
+                        throw new Error(data.error || 'Failed to find jobs');
+                    }
+                } catch (error) {
+                    jobCards.innerHTML = `<div class="no-jobs">Error: ${error.message}</div>`;
+                    jobResults.style.display = 'block';
+                } finally {
+                    // Hide loading
+                    jobSearchLoading.style.display = 'none';
+                }
+            });
+            
             // Load saved roadmaps from localStorage
             const savedRoadmaps = JSON.parse(localStorage.getItem('savedRoadmaps') || '[]');
             
@@ -153,6 +295,9 @@
                             <div class="saved-info">
                                 <span>${roadmap.roadmap.length} steps</span>
                                 <div class="saved-actions">
+                                    <button class="job-search-btn" data-career="${roadmap.career}" title="Find Jobs">
+                                        <i class="fas fa-briefcase"></i>
+                                    </button>
                                     ${roadmap.hasSkillGap ? `
                                     <button class="skill-gap-btn" data-career="${roadmap.career}" title="View Skill Gaps">
                                         <i class="fas fa-tasks"></i>
@@ -214,6 +359,16 @@
                         }
                     });
                 });
+                
+                // Add click events to job search buttons
+                const jobSearchButtons = document.querySelectorAll('.job-search-btn');
+                jobSearchButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const career = this.getAttribute('data-career');
+                        showJobSearch(career);
+                    });
+                });
             }
             
             // Function to display a selected roadmap
@@ -226,11 +381,16 @@
                     <div class="roadmap-header">
                         <h2><i class="fas fa-map-marked-alt"></i> Career Path: ${roadmap.career}</h2>
                         <p>Your saved roadmap to becoming a ${roadmap.career}</p>
-                        ${roadmap.hasSkillGap ? `
-                        <button id="view-skill-gaps" class="secondary-btn skill-gap-top-btn">
-                            <i class="fas fa-tasks"></i> View Your Skill Gaps
-                        </button>
-                        ` : ''}
+                        <div class="roadmap-actions">
+                            <button id="find-jobs-roadmap" class="secondary-btn jobs-btn-top">
+                                <i class="fas fa-briefcase"></i> Find Related Jobs
+                            </button>
+                            ${roadmap.hasSkillGap ? `
+                            <button id="view-skill-gaps" class="secondary-btn skill-gap-top-btn">
+                                <i class="fas fa-tasks"></i> View Your Skill Gaps
+                            </button>
+                            ` : ''}
+                        </div>
                     </div>
                     <div class="roadmap-timeline">
                 `;
@@ -277,6 +437,11 @@
                         displaySkillGapAnalysis(roadmap.career);
                     });
                 }
+                
+                // Add find jobs button functionality
+                document.getElementById('find-jobs-roadmap').addEventListener('click', function() {
+                    showJobSearch(roadmap.career);
+                });
             }
         });
     </script>

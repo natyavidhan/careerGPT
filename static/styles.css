@@ -1000,3 +1000,242 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+/* Job search button */
+.jobs-btn {
+    background-color: #2c7be5;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.jobs-btn:hover {
+    background-color: #1a68d1;
+    transform: translateY(-2px);
+}
+
+.jobs-btn-top {
+    margin-right: 10px;
+}
+
+.roadmap-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Job search button on saved cards */
+.job-search-btn {
+    background: none;
+    border: none;
+    color: #2c7be5;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 16px;
+    opacity: 0.8;
+    transition: all 0.2s;
+}
+
+.job-search-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Job cards */
+.job-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.job-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--accent-color);
+    transition: all 0.3s;
+}
+
+.job-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.job-role {
+    color: var(--title-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+}
+
+.fit-indicator {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    color: white;
+}
+
+.high-fit {
+    background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.medium-fit {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.low-fit {
+    background: linear-gradient(90deg, #6b7280, #4b5563);
+}
+
+.job-company {
+    color: var(--subtitle-color);
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.job-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--subtitle-color);
+}
+
+.job-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.job-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: rgba(44, 123, 229, 0.1);
+    color: #2c7be5;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.job-link:hover {
+    background-color: rgba(44, 123, 229, 0.2);
+}
+
+.no-jobs {
+    text-align: center;
+    padding: 20px;
+    color: var(--subtitle-color);
+    background-color: var(--input-bg);
+    border-radius: 8px;
+}
+
+.jobs-footer {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--subtitle-color);
+    font-style: italic;
+}
+
+/* Enhanced job cards */
+.job-requirements {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--input-border);
+}
+
+.job-requirements h4, .job-tools h4 {
+    color: var(--title-color);
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.requirements-list {
+    padding-left: 20px;
+    margin: 0;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.requirements-list li {
+    margin-bottom: 5px;
+}
+
+.requirements-list li:last-child {
+    margin-bottom: 0;
+}
+
+.job-tools {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--input-border);
+}
+
+.tools-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.tool-tag {
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--accent-color);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.job-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--input-border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.save-job-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    color: var(--subtitle-color);
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.save-job-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--accent-color);
+}

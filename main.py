@@ -3,6 +3,7 @@ import os
 import json
 from dotenv import load_dotenv
 from groq import Groq
+from jobs import fetch_jobs, parse_jobs, match_jobs
 
 # Load environment variables (for API key)
 load_dotenv()
@@ -230,6 +231,28 @@ def analyze_skill_gap():
         
     except Exception as e:
         return jsonify({"error": f"API request failed: {str(e)}"}), 500
+
+# New API endpoint for job search
+@app.route("/api/job_search", methods=["POST"])
+def job_search():
+    career = request.json.get("career", "")
+    skills = request.json.get("skills", [])
+    
+    if not career:
+        return jsonify({"error": "No career provided"}), 400
+    
+    try:
+        # Fetch jobs from API
+        raw_data = fetch_jobs(career, skills)
+        
+        jobs = parse_jobs(raw_data, career)
+        return jsonify({
+            "career": career,
+            "jobs": jobs
+        })
+        
+    except Exception as e:
+        return jsonify({"error": f"Job search failed: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
