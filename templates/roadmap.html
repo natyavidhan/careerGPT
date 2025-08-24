@@ -143,6 +143,19 @@
             let roadmapData = null;
             let skillGapData = null;
             
+            // Add missing loadSkillGapProgress function
+            function loadSkillGapProgress(career) {
+                const skillGaps = JSON.parse(localStorage.getItem(`skillGap_${career}`) || '{}');
+                return skillGaps;
+            }
+            
+            // Add missing saveSkillGapProgress function
+            function saveSkillGapProgress(career, skillId, isChecked) {
+                let skillGaps = loadSkillGapProgress(career);
+                skillGaps[skillId] = isChecked;
+                localStorage.setItem(`skillGap_${career}`, JSON.stringify(skillGaps));
+            }
+            
             // Animate progress bar
             let progress = 0;
             const progressInterval = setInterval(() => {

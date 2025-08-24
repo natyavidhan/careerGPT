@@ -219,6 +219,7 @@ def analyze_skill_gap():
         
         # Extract the JSON response from the AI
         ai_response = response.choices[0].message.content
+        print(ai_response)
         ai_response = ai_response.replace("```json", "").replace("```", "")
         
         try:
