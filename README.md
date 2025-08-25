@@ -106,12 +106,9 @@ python app.py
 
 ---
 
-## 📸 Screenshots (optional placeholders for hackathon demo)
-
-* Career Suggestions page
-* Roadmap Timeline
-* Skill Gap Checklist
-* Internship Cards with Fit Scores
+## 📸 Working Demo
+[Live Demo](https://careergpt-dhoomketu.vercel.app/)
+[Video Demo](https://www.youtube.com/watch?v=e9MEkWejH2k)
 
 ---
 
