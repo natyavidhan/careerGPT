@@ -2,8 +2,6 @@
 
 🚀 **CareerGPT** is an AI-powered career planning assistant that helps students explore career paths, identify skill gaps, generate personalized roadmaps, and even match with internships or jobs — all in one place.
 
-This project was built in under 1 hour for a hackathon challenge, showcasing the power of **AI agents + lightweight web tech**.
-
 ---
 
 ## ✨ Features
