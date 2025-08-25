@@ -24,22 +24,21 @@
         </div>
         
         <div class="action-buttons" style="display: none;">
-            <div id="save-container" class="save-container">
-                <button id="save-roadmap" class="save-btn">
-                    <i class="fas fa-bookmark"></i> Save Roadmap
-                </button>
-                <div id="save-notification" class="save-notification" style="display: none;">
-                    Roadmap saved successfully!
-                </div>
-            </div>
-            
-            <button id="analyze-gap-btn" class="analyze-btn">
-                <i class="fas fa-clipboard-check"></i> Analyze Your Skill Gaps
+            <button id="save-roadmap" class="save-btn action-btn">
+                <i class="fas fa-bookmark"></i> Save Roadmap
             </button>
             
-            <button id="find-jobs-btn" class="jobs-btn">
+            <button id="analyze-gap-btn" class="analyze-btn action-btn">
+                <i class="fas fa-clipboard-check"></i> Analyze Skill Gaps
+            </button>
+            
+            <button id="find-jobs-btn" class="jobs-btn action-btn">
                 <i class="fas fa-briefcase"></i> Find Related Jobs
             </button>
+        </div>
+
+        <div id="save-notification" class="save-notification" style="display: none;">
+            Roadmap saved successfully!
         </div>
         
         <!-- Skill Gap Analysis Modal -->
@@ -120,7 +119,6 @@
             const loadingIndicator = document.getElementById('loading');
             const roadmapContainer = document.getElementById('roadmap-container');
             const progressBar = document.getElementById('progress-bar');
-            const saveContainer = document.getElementById('save-container');
             const saveButton = document.getElementById('save-roadmap');
             const saveNotification = document.getElementById('save-notification');
             const actionButtons = document.querySelector('.action-buttons');
@@ -281,10 +279,7 @@
                     // Update button state
                     saveButton.innerHTML = '<i class="fas fa-check"></i> Roadmap Saved';
                     saveButton.classList.add('saved');
-                    setTimeout(() => {
-                        saveButton.innerHTML = '<i class="fas fa-bookmark"></i> Save Roadmap';
-                        saveButton.classList.remove('saved');
-                    }, 2000);
+                    saveButton.disabled = true;
                 }
             });
             
@@ -538,6 +533,7 @@
                             if (checkIfSaved(data.career)) {
                                 saveButton.innerHTML = '<i class="fas fa-bookmark"></i> Already Saved';
                                 saveButton.classList.add('already-saved');
+                                saveButton.disabled = true;
                             }
                         }, 500);
                     } else {
